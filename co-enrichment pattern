@@ -1,0 +1,37 @@
+normalize_and_correlate <- function(df, patient_col, cell_type_col, metadata) {
+  # Convert input to symbols
+  patient_col <- rlang::ensym(patient_col)
+  cell_type_col <- rlang::ensym(cell_type_col)
+  
+  # Count the cell types for each patient
+  cell_type_counts <- df %>%
+    group_by(!!patient_col, !!cell_type_col) %>%
+    summarize(Count = n(), .groups = "drop")
+  
+  # Calculate the total number of cells per patient
+  total_cells_per_patient <- cell_type_counts %>%
+    group_by(!!patient_col) %>%
+    summarize(TotalCells = sum(Count), .groups = "drop")
+  
+  # Calculate the proportion of each cell type within each patient
+  proportions <- cell_type_counts %>%
+    left_join(total_cells_per_patient, by = rlang::quo_name(patient_col)) %>%
+    mutate(Proportion = Count / TotalCells) %>%
+    dplyr::select(!!patient_col, !!cell_type_col, Proportion)
+  
+  # Convert the data to a wide format
+  wide_normalized_proportions <- proportions %>%
+    spread(!!cell_type_col, Proportion, fill = 0)
+  wide_normalized_proportions <- right_join(wide_normalized_proportions, metadata)
+  
+  # Calculate pairwise correlations
+  correlation_matrix <- corr.test(wide_normalized_proportions[,-1])$r
+  
+  
+  p <- correlation_matrix
+  
+  pvale <- corr.test(wide_normalized_proportions[,-1])$estimate
+  
+  
+  return(p,pvale)
+}
