@@ -1,0 +1,780 @@
+##Create project
+#remove mito and low count 
+#remove doublets
+#merge
+#normalize
+library(cowplot)
+library(tidyverse)
+library(SeuratObject)
+library(Seurat)
+library(RColorBrewer)
+library(data.table)
+library(DoubletFinder)
+options(stringsAsFactors = F)
+.libPaths(new = "/home/data/ssy36/R/x86_64-pc-linux-gnu-library/4.1/")
+###CRA
+
+# CRA ---------------------------------------------------------------------
+
+
+CRR073022 <- Read10X('CRR073022/outs/filtered_feature_bc_matrix/')
+CRR073022 <- CreateSeuratObject(counts = CRR073022, 
+                                project = "CRR073022", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073022)[grep("^MT-", rownames(CRR073022))] 
+print(mito_genes)
+CRR073022=PercentageFeatureSet(CRR073022, "^MT-", col.name = "percent_mito")
+CRR073022 <- subset(CRR073022,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073023 <- Read10X('CRR073023/outs/filtered_feature_bc_matrix/')
+CRR073023 <- CreateSeuratObject(counts = CRR073023, 
+                                project = "CRR073023", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073023)[grep("^MT-", rownames(CRR073023))] 
+print(mito_genes)
+CRR073023=PercentageFeatureSet(CRR073023, "^MT-", col.name = "percent_mito")
+CRR073023 <- subset(CRR073023,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073024 <- Read10X('CRR073024/outs/filtered_feature_bc_matrix/')
+CRR073024 <- CreateSeuratObject(counts = CRR073024, 
+                                project = "CRR073024", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073024)[grep("^MT-", rownames(CRR073024))] 
+print(mito_genes)
+CRR073024=PercentageFeatureSet(CRR073024, "^MT-", col.name = "percent_mito")
+CRR073024 <- subset(CRR073024,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+
+
+CRR073025 <- Read10X('CRR073025/outs/filtered_feature_bc_matrix/')
+CRR073025 <- CreateSeuratObject(counts = CRR073025, 
+                                project = "CRR073025", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073025)[grep("^MT-", rownames(CRR073025))] 
+print(mito_genes)
+CRR073025=PercentageFeatureSet(CRR073025, "^MT-", col.name = "percent_mito")
+CRR073025 <- subset(CRR073025,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+
+
+CRR073026 <- Read10X('CRR073026/outs/filtered_feature_bc_matrix/')
+CRR073026 <- CreateSeuratObject(counts = CRR073026, 
+                                project = "CRR073026", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073026)[grep("^MT-", rownames(CRR073026))] 
+print(mito_genes)
+CRR073026=PercentageFeatureSet(CRR073026, "^MT-", col.name = "percent_mito")
+CRR073026 <- subset(CRR073026,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073027 <- Read10X('CRR073027/outs/filtered_feature_bc_matrix/')
+CRR073027 <- CreateSeuratObject(counts = CRR073027, 
+                                project = "CRR073027", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073027)[grep("^MT-", rownames(CRR073027))] 
+print(mito_genes)
+CRR073027=PercentageFeatureSet(CRR073027, "^MT-", col.name = "percent_mito")
+CRR073027 <- subset(CRR073027,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073028 <- Read10X('CRR073028/outs/filtered_feature_bc_matrix/')
+CRR073028 <- CreateSeuratObject(counts = CRR073028, 
+                                project = "CRR073028", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073028)[grep("^MT-", rownames(CRR073028))] 
+print(mito_genes)
+CRR073028=PercentageFeatureSet(CRR073028, "^MT-", col.name = "percent_mito")
+CRR073028 <- subset(CRR073028,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073029 <- Read10X('CRR073029/outs/filtered_feature_bc_matrix/')
+CRR073029 <- CreateSeuratObject(counts = CRR073029, 
+                                project = "CRR073029", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073029)[grep("^MT-", rownames(CRR073029))] 
+print(mito_genes)
+CRR073029=PercentageFeatureSet(CRR073029, "^MT-", col.name = "percent_mito")
+CRR073029 <- subset(CRR073029,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073030 <- Read10X('CRR073030/outs/filtered_feature_bc_matrix/')
+CRR073030 <- CreateSeuratObject(counts = CRR073030, 
+                                project = "CRR073030", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073030)[grep("^MT-", rownames(CRR073030))] 
+print(mito_genes)
+CRR073030=PercentageFeatureSet(CRR073030, "^MT-", col.name = "percent_mito")
+CRR073030 <- subset(CRR073030,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073031 <- Read10X('CRR073031/outs/filtered_feature_bc_matrix/')
+CRR073031 <- CreateSeuratObject(counts = CRR073031, 
+                                project = "CRR073031", 
+                                min.cells = 3, min.features = 200)
+mito_genes=rownames(CRR073031)[grep("^MT-", rownames(CRR073031))] 
+print(mito_genes)
+CRR073031=PercentageFeatureSet(CRR073031, "^MT-", col.name = "percent_mito")
+CRR073031 <- subset(CRR073031,subset = nFeature_RNA > 100 & 
+                      nCount_RNA > 1000 & 
+                      nCount_RNA < 30000 &
+                      percent_mito < 20)
+
+CRR073022 <- RenameCells(CRR073022,
+                         new.names = str_c(colnames(CRR073022),'_',as.character(floor(runif(ncol(CRR073022))*1000000))))
+CRR073023 <- RenameCells(CRR073023,
+                         new.names = str_c(colnames(CRR073023),'_',as.character(floor(runif(ncol(CRR073023))*1000000))))
+CRR073024 <- RenameCells(CRR073024,
+                         new.names = str_c(colnames(CRR073024),'_',as.character(floor(runif(ncol(CRR073024))*1000000))))
+CRR073025 <- RenameCells(CRR073025,
+                         new.names = str_c(colnames(CRR073025),'_',as.character(floor(runif(ncol(CRR073025))*1000000))))
+CRR073026 <- RenameCells(CRR073026,
+                         new.names = str_c(colnames(CRR073026),'_',as.character(floor(runif(ncol(CRR073026))*1000000))))
+CRR073027 <- RenameCells(CRR073027,
+                         new.names = str_c(colnames(CRR073027),'_',as.character(floor(runif(ncol(CRR073027))*1000000))))
+CRR073028 <- RenameCells(CRR073028,
+                         new.names = str_c(colnames(CRR073028),'_',as.character(floor(runif(ncol(CRR073028))*1000000))))
+CRR073029 <- RenameCells(CRR073029,
+                         new.names = str_c(colnames(CRR073029),'_',as.character(floor(runif(ncol(CRR073029))*1000000))))
+CRR073030 <- RenameCells(CRR073030,
+                         new.names = str_c(colnames(CRR073030),'_',as.character(floor(runif(ncol(CRR073030))*1000000))))
+CRR073031 <- RenameCells(CRR073031,
+                         new.names = str_c(colnames(CRR073031),'_',as.character(floor(runif(ncol(CRR073031))*1000000))))
+
+
+##remove doublets
+doubfineddd <- function(x){
+  input <- x
+  input <- NormalizeData(input)
+  input <- FindVariableFeatures(input, selection.method = "vst", nfeatures = 2000)
+  input <- ScaleData(input)
+  input <- RunPCA(input)
+  tmp_list <- paramSweep_v3(input, PCs = 1:10, sct = FALSE)
+  tmp_list_sum <- summarizeSweep(tmp_list, GT = FALSE)
+  tmp_list_best <- find.pK(tmp_list_sum)
+  PkB <- tmp_list_best$pK[which.max(tmp_list_best$BCmetric)] %>% as.character() %>% as.numeric()
+  DoubletRate = 0.05                 
+  nExp_poi <- round(DoubletRate*ncol(input)) 
+  print('finding doublet')
+  input <- doubletFinder_v3(input, PCs = 1:10, pN = 0.25, pK = PkB, 
+                            nExp = nExp_poi, reuse.pANN = F, sct = T)
+  DF.name = colnames(input@meta.data)[grepl("DF.classification", colnames(input@meta.data))]
+  input=input[, input@meta.data[, DF.name] == "Singlet"]
+  input
+}
+
+# 
+# ncol(CRR073022)+
+#   ncol(CRR073023)+
+#   ncol(CRR073024)+
+#   ncol(CRR073025)+
+#   ncol(CRR073026)+ncol(CRR073027)+ncol(CRR073028)+ncol(CRR073029)+ncol(CRR073030)+ncol(CRR073031)
+#   
+#   
+CRR073022 <- doubfineddd(CRR073022)
+CRR073023 <- doubfineddd(CRR073023)
+CRR073024 <- doubfineddd(CRR073024)
+CRR073025 <- doubfineddd(CRR073025)
+CRR073026 <- doubfineddd(CRR073026)
+CRR073027 <- doubfineddd(CRR073027)
+CRR073028 <- doubfineddd(CRR073028)
+CRR073029 <- doubfineddd(CRR073029)
+CRR073030 <- doubfineddd(CRR073030)
+CRR073031 <- doubfineddd(CRR073031)
+
+CRA <- merge(CRR073022,y=c(CRR073023,CRR073024,CRR073025,CRR073026,
+                           CRR073027,CRR073028,CRR073029,CRR073030,CRR073031),
+             merge.data = T)
+
+CRA@meta.data <- CRA@meta.data[,c(1:4)]
+rm(CRR073022)
+rm(CRR073023)
+rm(CRR073024)
+rm(CRR073025)
+rm(CRR073026)
+rm(CRR073027)
+rm(CRR073028)
+rm(CRR073029)
+rm(CRR073030)
+rm(CRR073031)
+
+saveRDS(CRA,'~/CRALUADsinglecell/Newmerge/CRA_pre_rm_doublets.RData')
+
+####GSE123902
+
+# GSE123902 ---------------------------------------------------------------
+
+setwd("/home/data/vip35/CRALUADsinglecell/GSE123902/")
+fnames<-Sys.glob("*.gz")
+fnames
+
+ww <- function(x){
+  tmp <- fread(x)
+  tmp <- as.data.frame(tmp)
+  row.names(tmp) <- tmp$V1
+  tmp <- tmp[,-1]
+  tmp <- as.data.frame(t(tmp))
+  colnames(tmp) <- str_c(colnames(tmp),'_',as.character(floor(runif(ncol(tmp))*100000)))
+  tmp
+}
+
+fdataset<-lapply(fnames,ww)
+fnames2 <- str_split(fnames,'\\.',simplify = T)[,1]
+fnames2 <- str_split(fnames2,'_',simplify = T)[,1]
+fnames2
+
+names(fdataset) <- fnames2
+
+scelist <- lapply(fdataset, function(x){
+  x <-  CreateSeuratObject(counts = x, min.cells = 3, min.features = 200)
+})
+
+for (i in names(scelist)) {
+  scelist[[i]]@meta.data$orig.ident <- i
+  mito_genes=rownames(scelist[[i]])[grep("^MT-", rownames(scelist[[i]]))] 
+  print(mito_genes)
+  scelist[[i]]=PercentageFeatureSet(scelist[[i]], "^MT-", col.name = "percent_mito")
+  scelist[[i]] <- subset(scelist[[i]],subset = nFeature_RNA > 100 & 
+                           nCount_RNA > 1000 & 
+                           nCount_RNA < 30000 &
+                           percent_mito < 20)
+}
+
+scelist <- lapply(X = scelist, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+  x <- ScaleData(x)
+  x <- RunPCA(x)
+})
+
+#doublet
+for (i in names(scelist)) {
+  input <- scelist[[i]]
+  tmp_list <- paramSweep_v3(input, PCs = 1:10, sct = FALSE)
+  tmp_list_sum <- summarizeSweep(tmp_list, GT = FALSE)
+  tmp_list_best <- find.pK(tmp_list_sum)
+  PkB <- tmp_list_best$pK[which.max(tmp_list_best$BCmetric)] %>% as.character() %>% as.numeric()
+  DoubletRate = 0.05                 
+  nExp_poi <- round(DoubletRate*ncol(input)) 
+  print('finding doublet')
+  input <- doubletFinder_v3(input, PCs = 1:10, pN = 0.25, pK = PkB, 
+                            nExp = nExp_poi, reuse.pANN = F, sct = T)
+  DF.name = colnames(input@meta.data)[grepl("DF.classification", colnames(input@meta.data))]
+  input=input[, input@meta.data[, DF.name] == "Singlet"]
+  scelist[[i]] <- input
+  print('done')
+}
+
+
+GSE123902 <- merge(scelist[[1]],y = c(scelist[[2]],
+                                      scelist[[3]],
+                                      scelist[[4]],
+                                      scelist[[5]],
+                                      scelist[[6]],
+                                      scelist[[7]],
+                                      scelist[[8]],
+                                      scelist[[9]],
+                                      scelist[[10]],
+                                      scelist[[11]],
+                                      scelist[[12]],
+                                      scelist[[13]],
+                                      scelist[[14]],
+                                      scelist[[15]],
+                                      scelist[[16]],
+                                      scelist[[17]]),merge.data = T)
+GSE123902@meta.data <- GSE123902@meta.data[,c(1:4)]
+rm(fdataset)
+rm(scelist)
+rm(input)
+rm(tmp_list)
+rm(tmp_list_best)
+rm(tmp_list_sum)
+
+saveRDS(GSE123902,'~/CRALUADsinglecell/Newmerge/GSE123902_pre_rm_doublets.RData')
+
+#GSE148071
+
+# GSE148071 ---------------------------------------------------------------
+
+
+setwd("~/CRALUADsinglecell/GSE148071/")
+fnames<-Sys.glob("*.gz")
+fnames
+
+
+ww <- function(x){
+  tmp <- fread(x)
+  tmp <- as.data.frame(tmp)
+  row.names(tmp) <- tmp$V1
+  tmp <- tmp[,-1]
+  tmp
+}
+
+fdataset<-lapply(fnames,ww)
+fnames2 <- str_split(fnames,'\\.',simplify = T)[,1]
+fnames2 <- str_split(fnames2,'_',simplify = T)[,1]
+fnames2
+names(fdataset) <- fnames2
+
+
+scelist <- lapply(fdataset, function(x){
+  x <-  CreateSeuratObject(counts = x, min.cells = 3, min.features = 200)
+})
+
+for (i in names(scelist)) {
+  scelist[[i]]@meta.data$orig.ident <- i
+  mito_genes=rownames(scelist[[i]])[grep("^MT-", rownames(scelist[[i]]))] 
+  print(mito_genes)
+  scelist[[i]]= PercentageFeatureSet(scelist[[i]], "^MT-", col.name = "percent_mito")
+  scelist[[i]] <- subset(scelist[[i]],subset = nFeature_RNA > 100 & 
+                           nCount_RNA > 1000 & 
+                           nCount_RNA < 30000 &
+                           percent_mito < 20)
+}
+
+length(scelist)
+
+
+scelist <- lapply(X = scelist, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+  x <- ScaleData(x)
+  x <- RunPCA(x)
+})
+
+for (i in names(scelist)) {
+  input <- scelist[[i]]
+  tmp_list <- paramSweep_v3(input, PCs = 1:10, sct = FALSE)
+  tmp_list_sum <- summarizeSweep(tmp_list, GT = FALSE)
+  tmp_list_best <- find.pK(tmp_list_sum)
+  PkB <- tmp_list_best$pK[which.max(tmp_list_best$BCmetric)] %>% as.character() %>% as.numeric()
+  DoubletRate = 0.05                 
+  nExp_poi <- round(DoubletRate*ncol(input)) 
+  print('finding doublet')
+  input <- doubletFinder_v3(input, PCs = 1:10, pN = 0.25, pK = PkB, 
+                            nExp = nExp_poi, reuse.pANN = F, sct = T)
+  DF.name = colnames(input@meta.data)[grepl("DF.classification", colnames(input@meta.data))]
+  input=input[, input@meta.data[, DF.name] == "Singlet"]
+  scelist[[i]] <- input
+  print('done')
+}
+
+GSE148071 <- merge(scelist[[1]],y = c(scelist[[2]],
+                                      scelist[[3]],
+                                      scelist[[4]],
+                                      scelist[[5]],
+                                      scelist[[6]],
+                                      scelist[[7]],
+                                      scelist[[8]],
+                                      scelist[[9]],
+                                      scelist[[10]],
+                                      scelist[[11]],
+                                      scelist[[12]],
+                                      scelist[[13]],
+                                      scelist[[14]],
+                                      scelist[[15]],
+                                      scelist[[16]],
+                                      scelist[[17]],
+                                      scelist[[18]]),merge.data = T)
+
+GSE148071@meta.data <- GSE148071@meta.data[,c(1:4)]
+rm(fdataset)
+rm(scelist)
+rm(input)
+rm(tmp_list)
+rm(tmp_list_best)
+rm(tmp_list_sum)
+saveRDS(GSE148071,'~/CRALUADsinglecell/Newmerge/GSE148071_pre_rm_doublets.RData')
+
+#######HRR
+
+# HRR ---------------------------------------------------------------------
+
+
+setwd("~/CRALUADsinglecell/HRA000154/outputdata/")
+filemmm <- str_c('HRR','0',59353:59368)
+filemmm
+scelist <- list()
+
+for (i in filemmm) {
+  path1 <- paste0(i,'/outs/filtered_feature_bc_matrix/')
+  scelist[[i]] <- Read10X(path1)
+  scelist[[i]] <- CreateSeuratObject(counts = scelist[[i]], 
+                                     project = i, 
+                                     min.cells = 3, min.features = 200)
+  mito_genes=rownames(scelist[[i]])[grep("^MT-", rownames(scelist[[i]]))] 
+  print(mito_genes)
+  scelist[[i]]=PercentageFeatureSet(scelist[[i]], "^MT-", col.name = "percent_mito")
+  scelist[[i]] <- subset(scelist[[i]],subset = nFeature_RNA > 100 & 
+                           nCount_RNA > 1000 & 
+                           nCount_RNA < 30000 &
+                           percent_mito < 20)
+  
+}
+
+for (i in names(scelist)) {
+  scelist[[i]] <- RenameCells(scelist[[i]],
+                              new.names = str_c(colnames(scelist[[i]]),'_',
+                                                as.character(floor(runif(ncol(scelist[[i]]))*100000000))))
+}
+
+scelist <- lapply(X = scelist, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+  x <- ScaleData(x)
+  x <- RunPCA(x)
+})
+
+
+
+for (i in names(scelist)) {
+  input <- scelist[[i]]
+  tmp_list <- paramSweep_v3(input, PCs = 1:10, sct = FALSE)
+  tmp_list_sum <- summarizeSweep(tmp_list, GT = FALSE)
+  tmp_list_best <- find.pK(tmp_list_sum)
+  PkB <- tmp_list_best$pK[which.max(tmp_list_best$BCmetric)] %>% as.character() %>% as.numeric()
+  DoubletRate = 0.05                 
+  nExp_poi <- round(DoubletRate*ncol(input)) 
+  print('finding doublet')
+  input <- doubletFinder_v3(input, PCs = 1:10, pN = 0.25, pK = PkB, 
+                            nExp = nExp_poi, reuse.pANN = F, sct = T)
+  DF.name = colnames(input@meta.data)[grepl("DF.classification", colnames(input@meta.data))]
+  input=input[, input@meta.data[, DF.name] == "Singlet"]
+  scelist[[i]] <- input
+  print('done')
+}
+
+
+HRR <- merge(scelist[[1]],y = c(scelist[[2]],
+                                scelist[[3]],
+                                scelist[[4]],
+                                scelist[[5]],
+                                scelist[[6]],
+                                scelist[[7]],
+                                scelist[[8]],
+                                scelist[[9]],
+                                scelist[[10]],
+                                scelist[[11]],
+                                scelist[[12]],
+                                scelist[[13]],
+                                scelist[[14]],
+                                scelist[[15]],
+                                scelist[[16]]),merge.data = T)
+
+HRR@meta.data <- HRR@meta.data[,c(1:4)]
+rm(fdataset)
+rm(scelist)
+rm(input)
+rm(tmp_list)
+rm(tmp_list_best)
+rm(tmp_list_sum)
+rm(fdataset)
+rm(scelist)
+
+saveRDS(HRR,'~/CRALUADsinglecell/Newmerge/HRR_pre_rm_doublets.RData')
+
+
+#######GSE131907
+
+# gse131907 ---------------------------------------------------------------
+
+
+setwd("/home/data/vip35/CRALUADsinglecell/GSE131907")
+
+data<- fread(file ='GSE131907_Lung_Cancer_raw_UMI_matrix.txt', header = T, sep = '\t',data.table = F)
+data <- as.data.frame(data)
+rownames(data)=data$Index
+data=data[,-1]
+data[1:4,1:4]
+
+metadata <- readxl::read_xlsx('clini.xlsx')
+metadata <- as.data.frame(metadata)
+row.names(metadata) <- metadata$Accession
+
+table(metadata$Type)
+
+xx <- fread('GSE131907_Lung_Cancer_cell_annotation.txt')
+xx <- as.data.frame(xx)
+rownames(xx)=xx$Index
+xx <- xx[,-c(2)]
+colnames(xx)[2] <- c('Run_title')
+metadata <- readxl::read_xlsx('clini.xlsx')
+metadata <- as.data.frame(metadata)
+row.names(metadata) <- metadata$Accession
+
+metadata <- right_join(xx,metadata)
+row.names(metadata) <- metadata$Index
+
+sample_each_1 <- list()
+for (i in unique(metadata$Run_title)) {
+  tmp <- filter(metadata,metadata$Run_title == i)
+  sample_each_1[[i]] <- tmp
+}
+
+
+exptmp1 <- list()
+for (i in unique(metadata$Run_title)) {
+  exptmp1[[i]] <- data[,sample_each_1[[i]]$Index]
+}
+
+scelist_1 <- lapply(exptmp1, function(x){
+  x <-  CreateSeuratObject(counts = x, min.cells = 3, min.features = 200)
+})
+
+
+for (i in names(scelist_1)) {
+  scelist_1[[i]]@meta.data$orig.ident <- i
+  mito_genes=rownames(scelist_1[[i]])[grep("^MT-", rownames(scelist_1[[i]]))] 
+  print(mito_genes)
+  scelist_1[[i]]=PercentageFeatureSet(scelist_1[[i]], "^MT-", col.name = "percent_mito")
+  scelist_1[[i]] <- subset(scelist_1[[i]],subset = nFeature_RNA > 100 & 
+                             nCount_RNA > 1000 & 
+                             nCount_RNA < 30000 &
+                             percent_mito < 20)
+}
+
+scelist_1 <- lapply(X = scelist_1, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+  x <- ScaleData(x)
+  x <- RunPCA(x)
+})
+
+#doublet
+for (i in names(scelist_1)) {
+  input <- scelist_1[[i]]
+  tmp_list <- paramSweep_v3(input, PCs = 1:10, sct = FALSE)
+  tmp_list_sum <- summarizeSweep(tmp_list, GT = FALSE)
+  tmp_list_best <- find.pK(tmp_list_sum)
+  PkB <- tmp_list_best$pK[which.max(tmp_list_best$BCmetric)] %>% as.character() %>% as.numeric()
+  DoubletRate = 0.05                 
+  nExp_poi <- round(DoubletRate*ncol(input)) 
+  print('finding doublet')
+  input <- doubletFinder_v3(input, PCs = 1:10, pN = 0.25, pK = PkB, 
+                            nExp = nExp_poi, reuse.pANN = F, sct = T)
+  DF.name = colnames(input@meta.data)[grepl("DF.classification", colnames(input@meta.data))]
+  input=input[, input@meta.data[, DF.name] == "Singlet"]
+  scelist_1[[i]] <- input
+  print('done')
+}
+
+
+scelist <- scelist_1
+
+GSE131907 <- merge(scelist[[1]],y = c(scelist[[2]],
+                                      scelist[[3]],
+                                      scelist[[4]],
+                                      scelist[[5]],
+                                      scelist[[6]],
+                                      scelist[[7]],
+                                      scelist[[8]],
+                                      scelist[[9]],
+                                      scelist[[10]],
+                                      scelist[[11]],
+                                      scelist[[12]],scelist[[13]],scelist[[14]],scelist[[15]],
+                                      scelist[[16]],
+                                      scelist[[17]],
+                                      scelist[[18]],
+                                      scelist[[19]],
+                                      scelist[[20]],
+                                      scelist[[21]],
+                                      scelist[[22]],
+                                      scelist[[23]],
+                                      scelist[[24]],
+                                      scelist[[25]],
+                                      scelist[[26]],
+                                      scelist[[27]],
+                                      scelist[[28]],
+                                      scelist[[29]],
+                                      scelist[[30]],
+                                      scelist[[31]],
+                                      scelist[[32]],
+                                      scelist[[33]],
+                                      scelist[[34]],
+                                      scelist[[35]],
+                                      scelist[[36]],
+                                      scelist[[37]],
+                                      scelist[[38]],
+                                      scelist[[39]],
+                                      scelist[[40]],
+                                      scelist[[41]],
+                                      scelist[[42]],
+                                      scelist[[43]],
+                                      scelist[[44]],
+                                      scelist[[45]],
+                                      scelist[[46]],
+                                      scelist[[47]],
+                                      scelist[[48]],
+                                      scelist[[49]],
+                                      scelist[[50]],
+                                      scelist[[51]],
+                                      scelist[[52]],
+                                      scelist[[53]],
+                                      scelist[[54]],
+                                      scelist[[55]],
+                                      scelist[[56]]),merge.data = T)
+GSE131907@meta.data <- GSE131907@meta.data[,c(1:4)]
+
+rm(fdataset)
+rm(scelist)
+rm(scelist_1)
+rm(exptmp1)
+rm(data)
+rm(xx)
+rm(tmp)
+rm(metadata)
+rm(sample_each_1)
+rm(input)
+rm(tmp_list)
+rm(tmp_list_best)
+rm(tmp_list_sum)
+saveRDS(GSE131907,'~/CRALUADsinglecell/Newmerge/GSE131907_pre_rm_doublets.RData')
+
+
+###luadsmall
+
+# luadsmall ---------------------------------------------------------------
+
+
+setwd("~/CRALUADsinglecell/LUAD_smallcell/LUADnew/")
+
+fnames<-Sys.glob("RU*.csv")
+fnames
+
+ww <- function(x){
+  tmp <- fread(x)
+  tmp <- as.data.frame(tmp)
+  row.names(tmp) <- tmp$V1
+  tmp <- tmp[,-1]
+  tmp <- as.data.frame(t(tmp))
+  colnames(tmp) <- str_c(colnames(tmp),'_',as.character(floor(runif(ncol(tmp))*100000)))
+  tmp
+}
+
+fdataset<-lapply(fnames,ww)
+
+fnames2 <- str_split(fnames,'\\.',simplify = T)[,1]
+fnames2
+names(fdataset) <- fnames2
+
+scelist <- lapply(fdataset, function(x){
+  x <-  CreateSeuratObject(counts = x, min.cells = 3, min.features = 200)
+})
+
+for (i in names(scelist)) {
+  scelist[[i]]@meta.data$orig.ident <- i
+  mito_genes=rownames(scelist[[i]])[grep("^MT-", rownames(scelist[[i]]))] 
+  print(mito_genes)
+  scelist[[i]]=PercentageFeatureSet(scelist[[i]], "^MT-", col.name = "percent_mito")
+  scelist[[i]] <- subset(scelist[[i]],subset = nFeature_RNA > 100 & 
+                           nCount_RNA > 1000 & 
+                           nCount_RNA < 30000 &
+                           percent_mito < 20)
+}
+
+scelist <- lapply(X = scelist, FUN = function(x) {
+  x <- NormalizeData(x)
+  x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+  x <- ScaleData(x)
+  x <- RunPCA(x)
+})
+
+for (i in names(scelist)) {
+  input <- scelist[[i]]
+  tmp_list <- paramSweep_v3(input, PCs = 1:10, sct = FALSE)
+  tmp_list_sum <- summarizeSweep(tmp_list, GT = FALSE)
+  tmp_list_best <- find.pK(tmp_list_sum)
+  PkB <- tmp_list_best$pK[which.max(tmp_list_best$BCmetric)] %>% as.character() %>% as.numeric()
+  DoubletRate = 0.05                 
+  nExp_poi <- round(DoubletRate*ncol(input)) 
+  print('finding doublet')
+  input <- doubletFinder_v3(input, PCs = 1:10, pN = 0.25, pK = PkB, 
+                            nExp = nExp_poi, reuse.pANN = F, sct = T)
+  DF.name = colnames(input@meta.data)[grepl("DF.classification", colnames(input@meta.data))]
+  input=input[, input@meta.data[, DF.name] == "Singlet"]
+  scelist[[i]] <- input
+  print('done')
+}
+
+smallluad <- merge(scelist[[1]],y = c(scelist[[2]],
+                                      scelist[[3]],
+                                      scelist[[4]],
+                                      scelist[[5]],
+                                      scelist[[6]],
+                                      scelist[[7]],
+                                      scelist[[8]],
+                                      scelist[[9]],
+                                      scelist[[10]]),merge.data = T)
+
+smallluad@meta.data <- smallluad@meta.data[,c(1:4)]
+rm(fdataset)
+rm(scelist)
+rm(input)
+rm(tmp_list)
+rm(tmp_list_best)
+rm(tmp_list_sum)
+
+saveRDS(smallluad,'~/CRALUADsinglecell/Newmerge/small_pre_rm_doublets.RData')
+
+
+
+
+
+# HARMONY -----------------------------------------------------------------
+
+CRA <- readRDS('~/CRALUADsinglecell/Newmerge/CRA_pre_rm_doublets.RData')
+GSE123902 <- readRDS('~/CRALUADsinglecell/Newmerge/GSE123902_pre_rm_doublets.RData')
+GSE131907 <- readRDS('~/CRALUADsinglecell/Newmerge/GSE131907_pre_rm_doublets.RData')
+GSE148071 <- readRDS('~/CRALUADsinglecell/Newmerge/GSE148071_pre_rm_doublets.RData')
+HRR <- readRDS('~/CRALUADsinglecell/Newmerge/HRR_pre_rm_doublets.RData')
+
+###harmony
+allldata <- merge(CRA,y=c(GSE123902,GSE131907,GSE148071,HRR,small),merge.data = T)
+tmp <- allldata_hb
+tmp <- NormalizeData(tmp)
+tmp <- FindVariableFeatures(tmp, selection.method = "vst", nfeatures = 2000)
+tmp <- ScaleData(tmp)
+tmp <- RunPCA(tmp)
+
+library(harmony)
+
+tmp_harmony <- tmp %>% 
+  RunHarmony("orig.ident", 
+             plot_convergence = TRUE,
+             kmeans_init_nstart=20, 
+             kmeans_init_iter_max=10000,
+             max.iter.harmony = 200,
+             max.iter.cluster = 200)
+
+
+integrateddata_final <- tmp_harmony
+
+integrateddata_final <- FindNeighbors(integrateddata_final,dims = 1:30,reduction = "harmony")
+
+integrateddata_final <- FindClusters(integrateddata_final, resolution = 0.8)
+
+integrateddata_final <- RunUMAP(integrateddata_final, dims = 1:30,reduction = "harmony")
+
+DimPlot(integrateddata_final, reduction = "umap",label = T)+
+  guides(color=F)
