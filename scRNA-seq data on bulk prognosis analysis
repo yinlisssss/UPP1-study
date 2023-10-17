@@ -1,0 +1,282 @@
+library(clusterProfiler)
+#B cell
+#CD4
+#meta
+library(RColorBrewer)
+n <- 12
+qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
+col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
+
+setwd("~/Desktop/LUADsinglecell/BULK")
+finaldf_five <- readRDS('batchnormalized.RData')
+allsamplewith_sur <- readRDS('batchnormalized_surinfo.RData')
+allsamplewith_surinfo <- readRDS('allsamplewith_surinfo.RData')
+
+allsamplewith_surinfo
+finaldf_five <- finaldf_five[,allsamplewith_sur]
+finaldf_five[1:4,1:4]
+
+
+tumor <- readRDS('~/Desktop/marker.RData')
+tumor <- filter(tumor,tumor$avg_log2FC>1,tumor$adjp<0.05)
+
+
+library(data.table)
+library(org.Hs.eg.db)
+library(do)
+library(ggplot2)
+library(tidyverse)
+library(glmnet)
+library(survminer)
+library(survival)
+library(MCPcounter)
+library(GSVA)
+library(estimate)
+library(tsne)
+library(ggrastr)
+library(patchwork)
+library(ggVennDiagram)
+options(stringsAsFactors = FALSE)
+
+gsve_gse53 <- gsva(as.matrix(finaldf_five), tumor, method = "ssgsea")
+
+gsve_gse53 [1:4,1:4]
+
+# 
+# scc <- read.table('escor.gct',skip = 2,header = T)
+# row.names(scc) <- scc$NAME
+# scc <- as.data.frame(t(scc[,3:ncol(scc)]))
+# 
+# for (i in 1:561) {
+#   gsve_gse53[,i] <- gsve_gse53[,i]/(1-scc[i,4])
+# }
+
+
+
+gsve_gse53 <- as.data.frame(t(gsve_gse53))
+gsve_gse53$geo_accession <- row.names(gsve_gse53)
+gsve_gse53 <- right_join(gsve_gse53,allsamplewith_surinfo)
+row.names(gsve_gse53) <- gsve_gse53$geo_accession
+
+gsve_gse53 <- gsve_gse53[,c((ncol(gsve_gse53)-2),(ncol(gsve_gse53)-1),1:(ncol(gsve_gse53)-4))]
+
+
+
+svdata <- gsve_gse53
+
+##对数据集的基因进行bestSeparation统计
+res.cut <- surv_cutpoint(svdata, time = "OS.time", 
+                         event = "OS", 
+                         variables = names(svdata)[3:ncol(svdata)], 
+                         minprop = 0.3) 
+
+res.cat <- surv_categorize(res.cut)
+
+my.surv <- Surv(res.cat$OS.time, res.cat$OS)
+
+coxpdl1=data.frame()
+for (i in colnames(res.cat)[3:ncol(svdata)]) {
+  
+  group <- res.cat[,i] 
+  survival_dat <- data.frame(group = group)
+  fit <- survfit(my.surv ~ group)
+  group <- factor(group, levels = c("low", "high"))
+  data.survdiff <- survdiff(my.surv ~ group)
+  p.val = 1 - pchisq(data.survdiff$chisq, length(data.survdiff$n) - 1)
+  HR = (data.survdiff$obs[2]/data.survdiff$exp[2])/(data.survdiff$obs[1]/data.survdiff$exp[1])
+  up95 = exp(log(HR) + qnorm(0.975)*sqrt(1/data.survdiff$exp[2]+1/data.survdiff$exp[1]))
+  low95 = exp(log(HR) - qnorm(0.975)*sqrt(1/data.survdiff$exp[2]+1/data.survdiff$exp[1]))
+  coxpdl1=rbind(coxpdl1,cbind(gene=i,HR=HR,
+                              pvalue=p.val,
+                              lower=low95,
+                              upper=up95))
+}
+
+
+for(i in c(2:5)){
+  coxpdl1[,i] <- as.numeric(as.vector(coxpdl1[,i]))
+}
+Coxoutput2_pd1 <- arrange(coxpdl1,pvalue)  %>% #按照p值排序
+  filter(pvalue < 0.05) 
+
+coxpdl1$gene <- ifelse( coxpdl1$pvalue<0.05, str_c( coxpdl1$gene,'*'), coxpdl1$gene)
+
+
+m <- coxpdl1$HR
+names(m) <- coxpdl1$gene 
+
+coxpdl1$gene <- factor(coxpdl1$gene, levels=names(sort(m,decreasing = T)))
+
+
+
+p1 <- ggplot(data=coxpdl1,aes(x=HR,y=gene))+
+  geom_errorbarh(aes(xmax=upper,xmin=lower,color=gene),height=0,size=0.8)+
+  geom_point(aes(x=HR,y=gene,color=gene),size=3.5,shape=18)+   #画成菱形
+  geom_vline(xintercept = 1,linetype='dashed',size=0.6)+
+  ylab("")+  #标签
+  xlab("Hazard ratios")+ 
+  labs(color="P value",title ="" )+theme_bw()+
+  scale_color_manual(values  =col_vector)+guides(color=F)+
+  theme(axis.text.x = element_text(colour = 'black',size=13),plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = 'black',size=13),
+        axis.title.y = element_text(colour = 'black',size=13),
+        axis.text.y = element_text(colour = 'black',size=11))+ggtitle('LUAD Cohort 1')
+
+p1
+
+
+
+##TCGA
+
+#TCGA
+library(readxl)
+setwd("~/Desktop/m6a")
+
+exp_compare <- readRDS('LUAD_log2TPMplus1_unique_gene.RData')
+
+sampleinfo <- readRDS('sampleinfo.Rdata')
+sampleinfo <- filter(sampleinfo ,sampleinfo $TCGA=='LUAD',sampleinfo $sample_type =='Primary Tumor')
+sur <- fread('Survival_SupplementalTable_S1_20171025_xena_sp')
+com <- Reduce(intersect,list(sur$sample,sampleinfo$sample,colnames(exp_compare)))
+exp_sur <- exp_compare[,com]
+exp_sur[1:4,1:4]
+gsva_tcga <- gsva(as.matrix(exp_sur), tumor, method = "ssgsea")
+gsva_tcga <- as.data.frame(t(gsva_tcga))
+gsva_tcga$sample <- row.names(gsva_tcga)
+
+gsva_tcga$sample <- row.names(gsva_tcga)
+sur <- filter(sur,sur$sample %in% com)
+sur <- sur[,c(1,26,27,30,31)]
+
+gsva_tcga_2 <- right_join(sur,gsva_tcga)
+library(survival)
+library(survminer)
+row.names(gsva_tcga_2) <- gsva_tcga_2$sample
+gsva_tcga_2 <- gsva_tcga_2[,c(-1,-4,-5)]
+gsva_tcga_2$OS.time <- gsva_tcga_2$OS.time/30
+svdata <- gsva_tcga_2
+
+##对数据集的基因进行bestSeparation统计
+res.cut <- surv_cutpoint(svdata, time = "OS.time", 
+                         event = "OS", minprop = 0.3,
+                         variables = names(svdata)[3:ncol(svdata)]) #默认组内sample不能低于30%
+
+res.cat <- surv_categorize(res.cut)
+
+my.surv <- Surv(res.cat$OS.time, res.cat$OS)
+
+cox_tcga=data.frame()
+
+for (i in colnames(res.cat)[3:ncol(svdata)]) {
+  
+  group <- res.cat[,i] 
+  survival_dat <- data.frame(group = group)
+  fit <- survfit(my.surv ~ group)
+  group <- factor(group, levels = c("low", "high"))
+  data.survdiff <- survdiff(my.surv ~ group)
+  p.val = 1 - pchisq(data.survdiff$chisq, length(data.survdiff$n) - 1)
+  HR = (data.survdiff$obs[2]/data.survdiff$exp[2])/(data.survdiff$obs[1]/data.survdiff$exp[1])
+  up95 = exp(log(HR) + qnorm(0.975)*sqrt(1/data.survdiff$exp[2]+1/data.survdiff$exp[1]))
+  low95 = exp(log(HR) - qnorm(0.975)*sqrt(1/data.survdiff$exp[2]+1/data.survdiff$exp[1]))
+  cox_tcga=rbind(cox_tcga,cbind(gene=i,HR=HR,
+                                pvalue=p.val,
+                                lower=low95,
+                                upper=up95))
+}
+
+
+for(i in c(2:5)){
+  cox_tcga[,i] <- as.numeric(as.vector(cox_tcga[,i]))
+}
+cox_tcga_out <- arrange(cox_tcga,pvalue)  %>% #按照p值排序
+  filter(pvalue < 0.05) 
+
+
+
+cox_tcga$gene <- ifelse( cox_tcga$pvalue<0.05, str_c( cox_tcga$gene,'*'), cox_tcga$gene)
+
+tt <- cox_tcga$HR
+names(tt) <- cox_tcga$gene 
+
+cox_tcga$gene <- factor(cox_tcga$gene, levels=names(sort(tt,decreasing = T)))
+
+
+
+p3 <- ggplot(data=cox_tcga,aes(x=HR,y=gene))+
+  geom_errorbarh(aes(xmax=upper,xmin=lower,color=gene),height=0,size=0.8)+
+  geom_point(aes(x=HR,y=gene,color=gene),size=3.5,shape=18)+   #画成菱形
+  geom_vline(xintercept = 1,linetype='dashed',size=0.6)+
+  ylab("")+  #标签
+  xlab("Hazard ratios")+ 
+  labs(color="P value",title ="" )+theme_bw()+
+  scale_color_manual(values  =col_vector)+guides(color=F)+
+  theme(axis.text.x = element_text(colour = 'black',size=13),plot.title = element_text(hjust = 0.5),
+        axis.title.x = element_text(colour = 'black',size=13),
+        axis.title.y = element_text(colour = 'black',size=13),
+        axis.text.y = element_text(colour = 'black',size=11))+ggtitle('LUAD Cohort 3')
+
+
+
+
+#gse72
+
+##GSE72094
+
+gse72 <- readRDS('~/Desktop/m6a/GEO/Cluster/GSE72094/GSE72094.RData')
+clin <- readRDS('~/Desktop/m6a/GEO/Cluster/GSE72094/GSE72094Clinical.RData')
+clin <- clin[,c(2,49,54,60,62,66,70)]
+colnames(clin)[c(2:7)] <- c('Age','Gender','Smoking','Stage','OS.time','OS')
+
+clin $OS.time <- as.numeric(clin $OS.time)
+clin $OS <- ifelse(clin $OS=='Alive',0,1)
+clin <- na.omit(clin )
+
+gse72 <- gsva(as.matrix(gse72), tumor, method = "ssgsea")
+gse72 <- as.data.frame(t(gse72))
+gse72$geo_accession <- row.names(gse72)
+
+gse72 <- right_join(clin,gse72)
+gse72$OS.time <- gse72$OS.time/30
+row.names(gse72) <- gse72$geo_accession
+gse72 <- gse72[,c(-1:-5)]
+
+
+svdata <- gse72
+
+##对数据集的基因进行bestSeparation统计
+res.cut <- surv_cutpoint(svdata, time = "OS.time", 
+                         event = "OS", minprop = 0.3,
+                         variables = names(svdata)[3:ncol(svdata)]) #默认组内sample不能低于30%
+
+res.cat <- surv_categorize(res.cut)
+
+my.surv <- Surv(res.cat$OS.time, res.cat$OS)
+
+cox_gse72=data.frame()
+for (i in colnames(res.cat)[3:ncol(svdata)]) {
+  
+  group <- res.cat[,i] 
+  survival_dat <- data.frame(group = group)
+  fit <- survfit(my.surv ~ group)
+  group <- factor(group, levels = c("low", "high"))
+  data.survdiff <- survdiff(my.surv ~ group)
+  p.val = 1 - pchisq(data.survdiff$chisq, length(data.survdiff$n) - 1)
+  HR = (data.survdiff$obs[2]/data.survdiff$exp[2])/(data.survdiff$obs[1]/data.survdiff$exp[1])
+  up95 = exp(log(HR) + qnorm(0.975)*sqrt(1/data.survdiff$exp[2]+1/data.survdiff$exp[1]))
+  low95 = exp(log(HR) - qnorm(0.975)*sqrt(1/data.survdiff$exp[2]+1/data.survdiff$exp[1]))
+  cox_gse72=rbind(cox_gse72,cbind(gene=i,HR=HR,
+                                  pvalue=p.val,
+                                  lower=low95,
+                                  upper=up95))
+}
+
+
+for(i in c(2:5)){
+  cox_gse72[,i] <- as.numeric(as.vector(cox_gse72[,i]))
+}
+cox_gse72_out <- arrange(cox_gse72,pvalue)  %>% #按照p值排序
+  filter(pvalue < 0.05) 
+
+
+
+
